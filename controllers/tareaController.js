@@ -40,7 +40,7 @@ exports.crearTarea =  async (req, res) => {
 //obtener tareas por proyectos
 exports.obtenerTareas =  async (req, res) => {
     try {
-        const { proyecto } =req.body;
+        const { proyecto } =req.query;
         // revisar el id
         let existeProyecto = await Proyecto.findById(proyecto);
 
@@ -55,8 +55,8 @@ exports.obtenerTareas =  async (req, res) => {
         }
 
         //obtener proyectos
-        const tarea = await Tarea.find({ proyecto }).sort({creado: -1});
-        res.json({tarea});
+        const tareas = await Tarea.find({ proyecto }).sort({creado: -1});
+        res.json({tareas});
 
     } catch (error) {
         console.log(error);
@@ -90,12 +90,8 @@ exports.actualizarTarea =  async (req, res) => {
             return res.status(401).json({ msg: 'Usuario no autorizado'});
         }
         const nuevoTarea = {};
-        if(nombre){
-            nuevoTarea.nombre = nombre;
-        }
-        if(estado){
-            nuevoTarea.estado = estado;
-        }
+        nuevoTarea.nombre = nombre;
+        nuevoTarea.estado = estado;
 
         //actualizar
         tarea = await Tarea.findByIdAndUpdate({ _id: req.params.id }, { $set : nuevoTarea}, { new: true });
@@ -111,8 +107,7 @@ exports.actualizarTarea =  async (req, res) => {
 //actualizar tarea por ID
 exports.eliminarTarea =  async (req, res) => {
     try {
-
-        const { proyecto } =req.body;
+        const { proyecto } =req.query;
         // revisar el id
         let existeProyecto = await Proyecto.findById(proyecto);
 
